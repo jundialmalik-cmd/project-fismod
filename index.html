@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mengenal Radioaktif dan Pemanfaatannya di Indonesia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="navbar">
+
+        <!-- KIRI: LOGO + NAMA -->
+        <div class="navbar-left">
+            <img src="assets/logo-nuklimap.png" alt="Logo">
+            <span>NukliMap</span>
+        </div>
+
+        <!-- KANAN: MENU -->
+        <div class="navbar-right">
+            <button class="active" onclick="showPage('home', this)">Home</button>
+            <button onclick="showPage('peta', this)">Peta</button>
+            <button onclick="showPage('radioaktif', this)">Zat Radioaktif</button>
+            <button onclick="showPage('pemanfaatan', this)">Pemanfaatan</button>
+            <button onclick="showPage('k3', this)">K3</button>
+            <button onclick="showPage('alat-pendeteksi', this)">Alat Pendeteksi</button>
+            <button onclick="showPage('game', this)">Game Edukasi</button>
+            <button onclick="showPage('tentang', this)">Tentang Kami</button>
+        </div>
+
+    </div>
+
+
+    <div id="home" class="content active">
+        <div class="hero-home">
+            <h1>Mengenal Radioaktif dan Pemanfaatannya di Indonesia</h1>
+            <p>Pemetaan Zat Radioaktif dan Penerapannya</p>
+            <button onclick="showPage('peta', document.querySelectorAll('.navbar button')[1])">
+                Mulai Eksplorasi
+            </button>
+        </div>
+
+        <div class="info">
+            <h2>Hal Menarik Yang Dibahas</h2>
+            <div class="info-box">
+                <div class="card-container">
+                    <div class="info-card"
+                        onclick="showPage('radioaktif', document.querySelectorAll('.navbar button')[2])">
+                        <div class="card-header">
+                            <img src="assets/zat-radioaktif.jpg" alt="Zat Radioaktif">
+                            <div class="overlay-title">Zat Radioaktif</div>
+                            <div class="badge">NEW</div>
+                        </div>
+                        <p>Unsur yang memancarkan radiasi secara alami maupun buatan.</p>
+                    </div>
+
+                    <div class="info-card" onclick="showPage('peta', document.querySelectorAll('.navbar button')[1])">
+                        <div class="card-header">
+                            <img src="assets/persebaran.png" alt="Persebaran">
+                            <div class="overlay-title">Persebaran</div>
+                            <div class="badge">MAP</div>
+                        </div>
+                        <p>Lokasi zat radioaktif di Indonesia.</p>
+                    </div>
+
+                    <div class="info-card"
+                        onclick="showPage('pemanfaatan', document.querySelectorAll('.navbar button')[3])">
+                        <div class="card-header">
+                            <img src="assets/pemanfaatan.jpg" alt="Pemanfaatan">
+                            <div class="overlay-title">Pemanfaatan</div>
+                            <div class="badge">USE</div>
+                        </div>
+                        <p>Digunakan di bidang medis, industri, dan energi.</p>
+                    </div>
+
+                    <div class="info-card" onclick="showPage('k3', document.querySelectorAll('.navbar button')[4])">
+                        <div class="card-header">
+                            <img src="assets/k3.jpg" alt="K3">
+                            <div class="overlay-title">K3</div>
+                            <div class="badge">SAFETY</div>
+                        </div>
+                        <p>Keamanan, keselamatan, dan kesehatan.</p>
+                    </div>
+
+                    <div class="info-card wide"
+                        onclick="showPage('alat-pendeteksi', document.querySelectorAll('.navbar button')[5])">
+                        <div class="card-header">
+                            <img src="assets/alat-pendeteksi.jpg" alt="Alat Pendeteksi">
+                            <div class="overlay-title">Alat Pendeteksi</div>
+                            <div class="badge">TOOLS</div>
+                        </div>
+                        <p>Alat yang bisa mendeteksi zat radioaktif.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="peta" class="content">
+        <div class="info">
+            <h2>Peta Persebaran</h2>
+            <p>Persebaran zat radioaktif di Indonesia.</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="🔍 Cari lokasi atau mineral (contoh: Mamuju)...">
+            <div id="search-results" class="results-list"></div>
+        </div>
+
+        <div style="position: relative;">
+
+            <div id="map"></div>
+
+            <div class="compass-icon" title="Arah Utara">
+                <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+                    <text x="50" y="30" font-family="Arial, sans-serif" font-weight="900" font-size="32"
+                        text-anchor="middle" fill="#333" stroke="white" stroke-width="1"
+                        style="filter: drop-shadow(0 0 2px white);">N</text>
+
+                    <circle cx="50" cy="80" r="40" fill="rgba(255,255,255,0.9)" stroke="#333" stroke-width="2" />
+
+                    <path d="M50 115 L65 80 L35 80 Z" fill="#2c3e50" />
+
+                    <path d="M50 45 L65 80 L35 80 Z" fill="#e74c3c" />
+
+                    <circle cx="50" cy="80" r="4" fill="white" stroke="#333" stroke-width="1" />
+                </svg>
+            </div>
+
+            <div class="map-toolbar">
+                <button class="tool-btn" onclick="togglePanel('panel-layer')" title="Atur Layer">
+                    🗺️
+                </button>
+
+                <button class="tool-btn" onclick="togglePanel('panel-legend')" title="Legenda">
+                    ℹ️
+                </button>
+
+                <div class="divider"></div>
+
+                <button class="tool-btn" onclick="map.zoomIn()" title="Perbesar">
+                    ➕
+                </button>
+
+                <button class="tool-btn" onclick="map.zoomOut()" title="Perkecil">
+                    ➖
+                </button>
+            </div>
+
+            <div id="panel-layer" class="floating-panel hidden">
+                <h3>Filter Peta</h3>
+                <div id="layer-list-container">
+                </div>
+            </div>
+
+            <div id="panel-legend" class="floating-panel hidden">
+                <h3>Legenda</h3>
+                <div class="legend-item">
+                    <span class="dot red">●</span> Uranium Dominan
+                </div>
+                <div class="legend-item">
+                    <span class="dot gold">●</span> Thorium Dominan
+                </div>
+                <div class="legend-item">
+                    <span class="dot purple">●</span> Campuran (U & Th)
+                </div>
+                <hr>
+                <small>Klik ikon di peta untuk detail.</small>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="radioaktif" class="content">
+        <div id="list-materi">
+            <div class="info">
+                <h2>Zat Radioaktif</h2>
+                <p>Klik judul materi di bawah untuk masuk ke pembahasan lengkap.</p>
+                <div class="info-box" id="grid-materi"></div>
+            </div>
+        </div>
+
+        <div id="detail-materi" class="hidden">
+            <div class="detail-container">
+                <button class="back-btn" onclick="tutupDetail('materi')">⬅ Kembali ke Menu</button>
+
+                <h1 id="judul-materi">Judul Materi</h1>
+
+                <div id="video-materi" class="video-wrapper hidden">
+                    <iframe id="iframe-materi" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+
+                <div class="hero-img-wrapper">
+                    <img id="img-materi" class="detail-hero-img" src="" alt="Gambar Materi">
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('img-materi')" title="Perbesar Gambar">
+                        ⛶
+                    </button>
+                </div>
+
+                <div id="teks-materi" class="content-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pemanfaatan" class="content">
+        <div id="list-pemanfaatan">
+            <div class="info">
+                <h2>Pemanfaatan Radioaktif</h2>
+                <p>Aplikasi teknologi nuklir dalam berbagai bidang kehidupan.</p>
+                <div class="info-box" id="grid-pemanfaatan"></div>
+            </div>
+        </div>
+        <div id="detail-pemanfaatan" class="hidden">
+            <div class="detail-container">
+                <button class="back-btn" onclick="tutupDetail('pemanfaatan')">⬅ Kembali</button>
+                <h1 id="judul-pemanfaatan"></h1>
+                <div id="video-pemanfaatan" class="video-wrapper hidden">
+                    <iframe id="iframe-pemanfaatan" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="hero-img-wrapper">
+                    <img id="img-pemanfaatan" class="detail-hero-img" src="" alt="">
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('img-pemanfaatan')"
+                        title="Perbesar Gambar">
+                        ⛶
+                    </button>
+                </div>
+                <div id="teks-pemanfaatan" class="content-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="k3" class="content">
+        <div id="list-k3">
+            <div class="info">
+                <h2>K3 Radiasi</h2>
+                <p>Prosedur keselamatan kerja dan perlindungan dari bahaya radiasi.</p>
+                <div class="info-box" id="grid-k3"></div>
+            </div>
+        </div>
+        <div id="detail-k3" class="hidden">
+            <div class="detail-container">
+                <button class="back-btn" onclick="tutupDetail('k3')">⬅ Kembali</button>
+                <h1 id="judul-k3"></h1>
+                <div id="video-k3" class="video-wrapper hidden">
+                    <iframe id="iframe-k3" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="hero-img-wrapper">
+                    <img id="img-k3" class="detail-hero-img" src="" alt="">
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('img-k3')" title="Perbesar Gambar">
+                        ⛶
+                    </button>
+                </div>
+                <div id="teks-k3" class="content-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="alat-pendeteksi" class="content">
+        <div id="list-alat">
+            <div class="info">
+                <h2>Alat Pendeteksi</h2>
+                <p>Berbagai instrumen untuk mengukur dan mendeteksi radiasi.</p>
+                <div class="info-box" id="grid-alat"></div>
+            </div>
+        </div>
+        <div id="detail-alat" class="hidden">
+            <div class="detail-container">
+                <button class="back-btn" onclick="tutupDetail('alat')">⬅ Kembali</button>
+                <h1 id="judul-alat"></h1>
+                <div id="video-alat" class="video-wrapper hidden">
+                    <iframe id="iframe-alat" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="hero-img-wrapper">
+                    <img id="img-alat" class="detail-hero-img" src="" alt="">
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('img-alat')" title="Perbesar Gambar">
+                        ⛶
+                    </button>
+                </div>
+                <div id="teks-alat" class="content-body"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="game" class="content">
+        <div class="info">
+            <h2>GAME ZONE</h2>
+            <p>Pilih tantanganmu dan uji pengetahuan tentang radioaktif!</p>
+        </div>
+
+        <div id="game-menu-main" class="game-wrapper">
+            <div class="game-menu-container">
+                
+                <div class="game-choice-card" onclick="openGame('kurir')">
+                    <div class="game-card-img">
+                        <img src="assets/game-kurir.avif" alt="Kurir Isotop">
+                        <div class="game-tag simulation">SIMULASI</div>
+                    </div>
+                    <div class="game-card-content">
+                        <h3>Misi Kurir Isotop</h3>
+                        <p>Jadilah ahli proteksi radiasi! Tentukan isotop yang tepat dan pilih wadah pelindung yang aman.</p>
+                        <button class="play-btn">MAIN SEKARANG</button>
+                    </div>
+                </div>
+
+                <div class="game-choice-card" onclick="openGame('scramble')">
+                    <div class="game-card-img">
+                        <div class="scramble-thumb">
+                            <span class="scramble-icon">☢️</span>
+                        </div>
+                        <div class="game-tag puzzle">PUZZLE</div>
+                    </div>
+                    <div class="game-card-content">
+                        <h3>Radioaktif Scramble</h3>
+                        <p>Asah otakmu! Susun kembali huruf-huruf yang teracak menjadi istilah fisika nuklir.</p>
+                        <button class="play-btn">MAIN SEKARANG</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="game-app-kurir" class="game-wrapper hidden">
+            <div class="game-container">
+                <button class="back-btn-game" onclick="backToMenu()">⬅ Menu Game</button>
+                
+                <div id="start-screen-kurir">
+                    <span style="font-size: 4rem;">📦</span>
+                    <h1>Misi Kurir Isotop</h1>
+                    <p style="margin-bottom: 20px;">Identifikasi isotop yang diminta klien dan pilih wadah pelindung (shielding) yang aman.</p>
+                    <button class="start-btn" onclick="startKurirGame()">Mulai Misi</button>
+                </div>
+
+                <div id="game-screen-kurir" class="hidden">
+                    <div class="status-bar">
+                        <span id="score-kurir">Skor: 0</span>
+                        <span id="lives-kurir">Nyawa: 3 ❤️</span>
+                    </div>
+                    <div id="phase-area-kurir" class="fade-in"></div>
+                </div>
+
+                <div id="end-screen-kurir" class="hidden">
+                    <span style="font-size: 4rem;">🏁</span>
+                    <h1 id="final-status-kurir">Misi Selesai!</h1>
+                    <p id="final-score-kurir">Skor Akhir: 0</p>
+                    <button class="start-btn" onclick="startKurirGame()">Main Lagi</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-app-scramble" class="game-wrapper hidden">
+            <div class="game-container scrambler-theme">
+                <button class="back-btn-game" onclick="backToMenu()" style="color:#39ff14; border-color:#39ff14;">⬅ Menu Game</button>
+
+                <div id="start-screen-scramble">
+                    <span style="font-size: 4rem;">☢️</span>
+                    <h1 class="neon-text">RADIOAKTIF SCRAMBLE</h1>
+                    <p>Susun huruf acak menjadi istilah fisika nuklir yang benar.</p>
+                    <button class="start-btn" onclick="startScrambleGame()" style="background:#39ff14; color:black;">🔥 MULAI HACKING</button>
+                </div>
+
+                <div id="game-screen-scramble" class="hidden">
+                    <div class="status-bar-scramble">
+                        <span id="s-score">SKOR: 0</span>
+                        <span id="s-timer">⏱ 20</span>
+                        <span id="s-lives">LIVES: 3 ❤️</span>
+                    </div>
+
+                    <div class="scramble-area">
+                        <div id="scramble-word" class="neon-text-big">TEKAN START</div>
+                        <div id="scramble-hint" style="color:#aaa; margin-bottom: 20px;">?</div>
+                        
+                        <input type="text" id="scramble-input" placeholder="JAWABAN..." autocomplete="off">
+                        
+                        <div class="btn-group">
+                            <button class="scramble-btn check" onclick="cekJawabanScramble()">✅ CEK</button>
+                            <button class="scramble-btn skip" onclick="skipSoal()">⏩ LEWATI (-1 ❤)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="end-screen-scramble" class="hidden">
+                    <span style="font-size: 4rem;" id="end-icon-scramble">☠️</span>
+                    <h1 class="neon-text" id="end-title-scramble" style="color:red;">GAME OVER</h1>
+                    <p id="final-score-scramble">Skor Akhir: 0</p>
+                    <button class="start-btn" onclick="startScrambleGame()" style="background:#39ff14; color:black;">Main Lagi</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <section id="tentang" class="content tentang">
+        <h2 class="judul">Tentang Kami</h2>
+
+        <div class="tentang-wrapper">
+            <!-- Deskripsi -->
+            <div class="tentang-deskripsi">
+                <img src="https://i.ibb.co/C5STNN7P/Screenshot-2026-01-10-085657-removebg-preview.png" class="logo"
+                    alt="Logo Reatif">
+
+                <p>
+                    Kami adalah Pengembang Website ini yang bertempat di
+                    Bandung atau lebih tepatnya di Universitas Pendidikan Indonesia, Indonesia. Bersama dengan 1 ketua
+                    dan 4 anggota tim, kami fokus
+                    dalam mengembangkan Website Edukasi,simulasi, dan game interaktif.
+                </p>
+            </div>
+
+            <!-- Tim -->
+            <div class="tim">
+                <div class="card-tim">
+                    <div class="badge">KETUA</div>
+                    <img src="assets/rizqi-septianto.jpg" alt="Rizqi Septianto">
+                    <h3>Rizqi Septianto</h3>
+                    <p>FISIKA UPI</p>
+
+                </div>
+
+                <div class="card-tim">
+                    <div class="badge">ANGGOTA</div>
+                    <img src="assets/rd-sri-haifa.jpg" alt="Rd Sri Haifa">
+                    <h3>R.D Sri Haifa</h3>
+                    <p>FISIKA UPI</p>
+                </div>
+
+                <div class="card-tim">
+                    <div class="badge">ANGGOTA</div>
+                    <img src="assets/siti-hafshoh.jpg" alt="Siti Hafshoh">
+                    <h3>Siti Hafshoh</h3>
+                    <p>FISIKA UPI</p>
+                </div>
+
+                <div class="card-tim">
+                    <div class="badge">ANGGOTA</div>
+                    <img src="assets/bagus-dwi.jpg" alt="Bagus Dwi">
+                    <h3>Bagus Dwi</h3>
+                    <p>FISIKA UPI</p>
+                </div>
+
+                <div class="card-tim">
+                    <div class="badge">ANGGOTA</div>
+                    <img src="assets/jundi-almalik.jpg" alt="Jundi Almalik">
+                    <h3>Jundi Almalik</h3>
+                    <p>FISIKA UPI</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 Fisika Modern
+    </footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
